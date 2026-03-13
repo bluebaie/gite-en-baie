@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-const fmtAirbnb = (n?: number) => (typeof n === "number" ? n.toFixed(2) : "—");
+const fmtAirbnb  = (n?: number) => (typeof n === "number" ? n.toFixed(2) : "—");
 const fmtBooking = (n?: number) => (typeof n === "number" ? n.toFixed(1) : "—");
-const fmtAvis = (n?: number) =>
+const fmtAvis    = (n?: number) =>
   new Intl.NumberFormat("fr-FR").format(typeof n === "number" ? n : 0);
 
 function StarIcon({ className = "" }: { className?: string }) {
@@ -27,7 +27,6 @@ type Gite = {
   etoiles?: number;
   imageUrl?: string;
   bookingUrl?: string;
-
   airbnbNote?: number;
   airbnbAvis?: number;
   bookingNote?: number;
@@ -42,7 +41,6 @@ export default function Section2Featured({ highlights }: { highlights: Gite[] })
     const el = scrollerRef.current;
     if (!el) return;
 
-    // Respecte "réduire les animations"
     const media = window.matchMedia?.("(prefers-reduced-motion: reduce)");
     if (media?.matches) return;
 
@@ -50,13 +48,9 @@ export default function Section2Featured({ highlights }: { highlights: Gite[] })
 
     const tick = () => {
       if (!el || paused) return;
-
       const maxScrollLeft = el.scrollWidth - el.clientWidth;
-      const step = el.clientWidth; // "page" (3 visibles sur desktop environ)
-
+      const step = el.clientWidth;
       const next = Math.min(el.scrollLeft + step, maxScrollLeft);
-
-      // Si on est (presque) à la fin => retour au début
       if (el.scrollLeft >= maxScrollLeft - 4) {
         el.scrollTo({ left: 0, behavior: "smooth" });
       } else {
@@ -78,30 +72,43 @@ export default function Section2Featured({ highlights }: { highlights: Gite[] })
         <div className="absolute inset-0 opacity-[0.06] [background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22120%22 height=%22120%22 filter=%22url(%23n)%22 opacity=%220.35%22/%3E%3C/svg%3E')]" />
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-14">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
+
         {/* Titre + texte */}
-        <div className="flex flex-col gap-3">
-          <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-white">
+        <div className="flex flex-col gap-2 sm:gap-3">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-medium tracking-tight text-white leading-snug">
             Nos gîtes en Baie de Somme
           </h2>
 
-          <p className="text-base md:text-lg text-white/75 leading-relaxed max-w-5xl">
-            Face au port de Saint-Valery-sur-Somme, dans le quartier authentique
-            du Courtgain ou au cœur du Marquenterre, nos gîtes offrent des
-            expériences différentes : vue panoramique sur la baie, maison de
-            pêcheur typique, cocon intimiste ou grande maison familiale. Chaque
-            adresse a son caractère, toujours avec le même souci du confort, de
-            l’emplacement et du plaisir de séjourner en Baie de Somme.
+          {/* Description complète desktop, raccourcie mobile */}
+          <p className="text-sm sm:text-base md:text-lg text-white/75 leading-relaxed max-w-5xl">
+            <span className="sm:hidden">
+              Vue sur la baie, maison de pêcheur ou cocon intimiste au cœur du Marquenterre —
+              chaque adresse a son caractère, avec le même souci du confort.
+            </span>
+            <span className="hidden sm:inline">
+              Face au port de Saint-Valery-sur-Somme, dans le quartier authentique
+              du Courtgain ou au cœur du Marquenterre, nos gîtes offrent des
+              expériences différentes : vue panoramique sur la baie, maison de
+              pêcheur typique, cocon intimiste ou grande maison familiale. Chaque
+              adresse a son caractère, toujours avec le même souci du confort, de
+              l'emplacement et du plaisir de séjourner en Baie de Somme.
+            </span>
           </p>
         </div>
 
         {/* À la une */}
         {highlights?.length ? (
-          <div className="mt-10">
+          <div className="mt-8 sm:mt-10">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-medium text-white">À la une</h3>
-              <p className="text-xs text-white/60">
+              <h3 className="text-base sm:text-xl font-medium text-white">À la une</h3>
+              {/* Indicateur défilement — masqué sur mobile (trop verbeux) */}
+              <p className="hidden sm:block text-xs text-white/60">
                 {paused ? "Pause" : "Défilement auto"} · Survole pour arrêter
+              </p>
+              {/* Mobile : petits dots indicateurs */}
+              <p className="sm:hidden text-xs text-white/45">
+                Glisse pour voir plus →
               </p>
             </div>
 
@@ -111,21 +118,25 @@ export default function Section2Featured({ highlights }: { highlights: Gite[] })
               onMouseEnter={() => setPaused(true)}
               onMouseLeave={() => setPaused(false)}
               onTouchStart={() => setPaused(true)}
+              onTouchEnd={() => setPaused(false)}
               className="mt-4 overflow-x-auto pb-3 scroll-smooth"
+              // Cache la scrollbar sur mobile
+              style={{ scrollbarWidth: "none" }}
             >
-              <div className="flex gap-4 snap-x snap-mandatory">
+              <div className="flex gap-3 sm:gap-4 snap-x snap-mandatory">
                 {highlights.map((g) => (
                   <div
                     key={g.id}
-                    className="
-                      snap-start
-                      min-w-[280px] sm:min-w-[360px] lg:min-w-[420px]
-                      rounded-2xl p-[1px]
-                      bg-gradient-to-br
-                      from-white/18 via-white/6 to-[#0ea5a6]/18
-                      transition
-                      hover:from-white/28 hover:via-white/10 hover:to-[#0ea5a6]/24
-                    "
+                    className={[
+                      "snap-start",
+                      // Mobile : presque plein écran pour qu'on voie clairement qu'il y en a d'autres
+                      "min-w-[82vw] sm:min-w-[360px] lg:min-w-[420px]",
+                      "rounded-2xl p-[1px]",
+                      "bg-gradient-to-br",
+                      "from-white/18 via-white/6 to-[#0ea5a6]/18",
+                      "transition",
+                      "hover:from-white/28 hover:via-white/10 hover:to-[#0ea5a6]/24",
+                    ].join(" ")}
                   >
                     <article
                       className="
@@ -144,7 +155,8 @@ export default function Section2Featured({ highlights }: { highlights: Gite[] })
                         <div className="absolute -bottom-28 -left-28 h-72 w-72 rounded-full bg-[#0ea5a6]/10 blur-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                       </div>
 
-                      <div className="relative aspect-[16/10] w-full bg-white/5 overflow-hidden">
+                      {/* Image — ratio légèrement plus haut sur mobile */}
+                      <div className="relative aspect-[16/10] sm:aspect-[16/10] w-full bg-white/5 overflow-hidden">
                         {g.imageUrl ? (
                           <img
                             src={g.imageUrl}
@@ -156,41 +168,41 @@ export default function Section2Featured({ highlights }: { highlights: Gite[] })
                         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/0" />
                       </div>
 
-                      <div className="relative p-5">
-                        <h4 className="text-lg font-semibold text-white">
+                      <div className="relative p-4 sm:p-5">
+                        <h4 className="text-base sm:text-lg font-semibold text-white leading-snug">
                           {g.nom}
                         </h4>
 
-                        <p className="mt-1 text-sm text-white/70">
+                        <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-white/70">
                           {g.ville}
                           {g.secteur ? ` — ${g.secteur}` : ""}
                         </p>
 
-                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                        {typeof g.capacite === "number" && (
-                        <span className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs text-white/80 backdrop-blur-sm">
-                       {g.capacite} personnes
-                       </span>
-                       )}
+                        <div className="mt-2 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                          {typeof g.capacite === "number" && (
+                            <span className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[11px] sm:text-xs text-white/80 backdrop-blur-sm">
+                              {g.capacite} pers.
+                            </span>
+                          )}
 
-                      {/* Badge note (Airbnb prioritaire, sinon Booking) */}
-                      {typeof g.airbnbNote === "number" || typeof g.bookingNote === "number" ? (
-                      <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs text-white/85 backdrop-blur-sm">
-                       <StarIcon className="h-4 w-4 text-yellow-300" />
-                           <span className="font-semibold">
-                           {typeof g.airbnbNote === "number" ? fmtAirbnb(g.airbnbNote) : fmtBooking(g.bookingNote)}
+                          {typeof g.airbnbNote === "number" || typeof g.bookingNote === "number" ? (
+                            <span className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/20 bg-white/5 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[11px] sm:text-xs text-white/85 backdrop-blur-sm">
+                              <StarIcon className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-300" />
+                              <span className="font-semibold">
+                                {typeof g.airbnbNote === "number" ? fmtAirbnb(g.airbnbNote) : fmtBooking(g.bookingNote)}
+                              </span>
+                              {/* Nombre d'avis masqué sur mobile pour compacité */}
+                              <span className="text-white/60 hidden sm:inline">
+                                ({fmtAvis(typeof g.airbnbNote === "number" ? g.airbnbAvis : g.bookingAvis)} avis)
+                              </span>
                             </span>
-                            <span className="text-white/60">
-                           ({fmtAvis(typeof g.airbnbNote === "number" ? g.airbnbAvis : g.bookingAvis)} avis)
-                            </span>
-                            </span>
-                            ) : null}
-                            </div>
+                          ) : null}
+                        </div>
 
-                           <div className="mt-4 flex gap-3">
+                        <div className="mt-3 sm:mt-4 flex gap-2 sm:gap-3">
                           <Link
                             href={`/gites/${g.slug}`}
-                            className="flex-1 rounded-lg bg-white/10 px-4 py-2 text-center text-sm text-white transition hover:bg-white/15 hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
+                            className="flex-1 rounded-lg bg-white/10 px-3 sm:px-4 py-2 text-center text-xs sm:text-sm text-white transition hover:bg-white/15 hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
                           >
                             Voir
                           </Link>
@@ -200,7 +212,7 @@ export default function Section2Featured({ highlights }: { highlights: Gite[] })
                               href={g.bookingUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="flex-1 rounded-lg bg-white px-4 py-2 text-center text-sm text-black transition hover:opacity-95 hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
+                              className="flex-1 rounded-lg bg-white px-3 sm:px-4 py-2 text-center text-xs sm:text-sm text-black transition hover:opacity-95 hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)]"
                             >
                               Réserver
                             </a>

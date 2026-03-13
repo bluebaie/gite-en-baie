@@ -7,9 +7,9 @@ type Ratings = {
   booking: { note: number | null; avis: number };
 };
 
-const fmtAirbnb = (n: number | null) => (n == null ? "—" : n.toFixed(2));
+const fmtAirbnb  = (n: number | null) => (n == null ? "—" : n.toFixed(2));
 const fmtBooking = (n: number | null) => (n == null ? "—" : n.toFixed(1));
-const fmtAvis = (n: number) => new Intl.NumberFormat("fr-FR").format(n);
+const fmtAvis    = (n: number) => new Intl.NumberFormat("fr-FR").format(n);
 
 function StarIcon({ className = "" }: { className?: string }) {
   return (
@@ -50,55 +50,58 @@ export default function RatingsPillRotator({
     [ratings]
   );
 
-  const [idx, setIdx] = useState(0);
+  const [idx,  setIdx]  = useState(0);
   const [fade, setFade] = useState(false);
 
   useEffect(() => {
     const t = window.setInterval(() => {
-      // petite transition “fade” clean
       setFade(true);
       window.setTimeout(() => {
         setIdx((v) => (v + 1) % items.length);
         setFade(false);
       }, 180);
     }, intervalMs);
-
     return () => window.clearInterval(t);
   }, [intervalMs, items.length]);
 
-  const it = items[idx];
+  const it      = items[idx];
   const noteStr = it.fmt(it.note);
   const avisStr = fmtAvis(it.avis);
 
   return (
-    <div className="mt-5">
+    <div className="mt-4 sm:mt-5">
       <div
         className={[
-          "group inline-flex items-center gap-2 rounded-full",
-          "border border-white/15 bg-white/10 px-4 py-2",
-          "text-xs text-white/90 backdrop-blur-md",
+          "group inline-flex items-center rounded-full",
+          // Espacement réduit sur mobile
+          "gap-1.5 sm:gap-2",
+          "px-3 py-1.5 sm:px-4 sm:py-2",
+          "border border-white/15 bg-white/10",
+          // Texte légèrement plus petit sur mobile
+          "text-[11px] sm:text-xs text-white/90 backdrop-blur-md",
           "shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition",
           "hover:-translate-y-[1px] hover:bg-white/15 hover:border-white/25",
           fade ? "opacity-50" : "opacity-100",
         ].join(" ")}
         title={it.title(noteStr, avisStr)}
       >
-        {/* pastille premium + étoile jaune */}
-        <span className="relative inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/15 bg-white/10">
+        {/* Pastille étoile — légèrement réduite sur mobile */}
+        <span className="relative inline-flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full border border-white/15 bg-white/10">
           <span className="absolute -inset-1 rounded-full bg-white/10 blur-md opacity-0 transition group-hover:opacity-100" />
-          <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-white/70 animate-pulse" />
-          <StarIcon className="relative h-4 w-4 text-yellow-300" />
+          <span className="absolute right-0.5 top-0.5 sm:right-1 sm:top-1 h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-white/70 animate-pulse" />
+          <StarIcon className="relative h-3 w-3 sm:h-4 sm:w-4 text-yellow-300" />
         </span>
 
         <span className="font-medium tracking-wide text-white/85">{it.label}</span>
         <span className="text-white/50">•</span>
 
         <span className="font-semibold text-white">
-          {noteStr}
-          {it.denom}
+          {noteStr}{it.denom}
         </span>
 
-        <span className="text-white/60">({avisStr} avis)</span>
+        {/* Nombre d'avis : entre parenthèses sur desktop, sans sur très petit écran */}
+        <span className="text-white/60 hidden xs:inline">({avisStr} avis)</span>
+        <span className="text-white/60 xs:hidden">{avisStr}</span>
       </div>
     </div>
   );
