@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 
-// ── Palette cohérente avec la homepage ──────────────────────────────────
-// Fond sombre forêt/mer, texte blanc, accents verts naturels
-const ACCENT    = "#1C3A2F";   // vert forêt (bouton Réserver)
-const ACCENT_LT = "#2A5242";   // vert légèrement plus clair au hover
+const ACCENT    = "#1C3A2F";
+const ACCENT_LT = "#2A5242";
 const TEXT      = "#F8F7F2";
 const TEXT_MUTED= "rgba(248,247,242,0.65)";
 const BORDER    = "rgba(255,255,255,0.12)";
@@ -75,13 +73,9 @@ export default function ContactPageForm() {
   });
 
   const labelStyle: React.CSSProperties = {
-    fontSize: 12,
-    fontWeight: 600,
-    letterSpacing: "0.08em",
-    textTransform: "uppercase",
-    color: TEXT_MUTED,
-    marginBottom: 8,
-    display: "block",
+    fontSize: 12, fontWeight: 600, letterSpacing: "0.08em",
+    textTransform: "uppercase", color: TEXT_MUTED,
+    marginBottom: 8, display: "block",
   };
 
   return (
@@ -96,208 +90,139 @@ export default function ContactPageForm() {
           box-shadow: 0 12px 32px rgba(28,58,47,0.55) !important;
           background: ${ACCENT_LT} !important;
         }
-        .contact-submit:active:not(:disabled) {
-          transform: scale(0.98);
-        }
+        .contact-submit:active:not(:disabled) { transform: scale(0.98); }
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .contact-card { animation: fadeUp 0.55s ease both; }
-        .contact-card-left { animation: fadeUp 0.5s ease both; }
+        .contact-card-left  { animation: fadeUp 0.5s ease both; }
         .contact-card-right { animation: fadeUp 0.6s 0.08s ease both; }
+
+        /* ── Layout ── */
+        .contact-grid {
+          display: grid;
+          grid-template-columns: 1fr 1.8fr;
+          gap: 32px;
+          align-items: start;
+        }
+        .contact-name-email-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+          margin-bottom: 20px;
+        }
+
+        /* ── Mobile ── */
+        @media (max-width: 767px) {
+          .contact-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+          }
+          /* Formulaire en premier sur mobile */
+          .contact-card-right { order: 1; }
+          .contact-card-left  { order: 2; }
+
+          .contact-card-left,
+          .contact-card-right {
+            padding: 22px 18px !important;
+            border-radius: 20px !important;
+          }
+
+          /* Nom + email en colonne sur mobile */
+          .contact-name-email-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+          }
+
+          /* Bouton pleine largeur */
+          .contact-submit-wrapper { justify-content: stretch !important; }
+          .contact-submit { width: 100%; padding: 15px 20px !important; }
+
+          /* Réassurance masquée sur mobile */
+          .contact-reassurance { display: none !important; }
+        }
       `}</style>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1.8fr",
-        gap: 32,
-        alignItems: "start",
-      }}>
+      <div className="contact-grid">
 
         {/* ── Colonne gauche — infos ── */}
-        <div className="contact-card-left" style={{
-          background: "rgba(255,255,255,0.04)",
-          border: `1px solid ${BORDER}`,
-          borderRadius: 24,
-          padding: "36px 28px",
-          backdropFilter: "blur(12px)",
-        }}>
-          <p style={{
-            fontSize: 11, fontWeight: 700, letterSpacing: "0.2em",
-            textTransform: "uppercase", color: TEXT_MUTED, marginBottom: 20,
-          }}>
+        <div className="contact-card-left" style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${BORDER}`, borderRadius: 24, padding: "36px 28px", backdropFilter: "blur(12px)" }}>
+          <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: TEXT_MUTED, marginBottom: 20 }}>
             Contact & réservation
           </p>
-
-          <h1 style={{
-            fontSize: "clamp(28px, 3.5vw, 42px)",
-            fontWeight: 700, lineHeight: 1.1,
-            color: TEXT, marginBottom: 16, letterSpacing: "-0.5px",
-          }}>
+          <h1 style={{ fontSize: "clamp(24px, 3.5vw, 42px)", fontWeight: 700, lineHeight: 1.1, color: TEXT, marginBottom: 16, letterSpacing: "-0.5px" }}>
             Contactez-<br />nous
           </h1>
-
-          <p style={{
-            fontSize: 15, lineHeight: 1.75,
-            color: TEXT_MUTED, marginBottom: 36,
-          }}>
+          <p style={{ fontSize: 15, lineHeight: 1.75, color: TEXT_MUTED, marginBottom: 28 }}>
             Une question ou une demande de réservation ? Nous vous répondons rapidement.
           </p>
 
-          {/* Infos pratiques */}
           {[
-            { icon: "✉️", label: "Email", value: "bluebaieconciergerie@gmail.com" },
-            { icon: "📍", label: "Localisation", value: "Saint-Valery-sur-Somme\n& Marquenterre" },
-            { icon: "⏱", label: "Réponse", value: "Sous 24h en général" },
+            { icon: "✉️", label: "Email",        value: "bluebaieconciergerie@gmail.com" },
+            { icon: "📍", label: "Localisation",  value: "Saint-Valery-sur-Somme\n& Marquenterre" },
+            { icon: "⏱",  label: "Réponse",       value: "Sous 24h en général" },
           ].map((item) => (
-            <div key={item.label} style={{
-              display: "flex", gap: 14, alignItems: "flex-start",
-              marginBottom: 20,
-            }}>
-              <div style={{
-                width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-                background: "rgba(255,255,255,0.07)",
-                border: `1px solid ${BORDER}`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 16,
-              }}>
+            <div key={item.label} style={{ display: "flex", gap: 14, alignItems: "flex-start", marginBottom: 18 }}>
+              <div style={{ width: 38, height: 38, borderRadius: 10, flexShrink: 0, background: "rgba(255,255,255,0.07)", border: `1px solid ${BORDER}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>
                 {item.icon}
               </div>
               <div>
-                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: TEXT_MUTED, marginBottom: 2 }}>
-                  {item.label}
-                </div>
-                <div style={{ fontSize: 14, color: TEXT, lineHeight: 1.5, whiteSpace: "pre-line" }}>
-                  {item.value}
-                </div>
+                <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: TEXT_MUTED, marginBottom: 2 }}>{item.label}</div>
+                <div style={{ fontSize: 14, color: TEXT, lineHeight: 1.5, whiteSpace: "pre-line" }}>{item.value}</div>
               </div>
             </div>
           ))}
 
-          {/* Réassurance */}
-          <div style={{
-            marginTop: 32, paddingTop: 24,
-            borderTop: `1px solid ${BORDER}`,
-            display: "flex", flexDirection: "column", gap: 10,
-          }}>
+          <div className="contact-reassurance" style={{ marginTop: 28, paddingTop: 22, borderTop: `1px solid ${BORDER}`, display: "flex", flexDirection: "column", gap: 10 }}>
             {["🔒 Paiement sécurisé via Beds24", "🏡 Propriétaire présent & réactif", "📋 Linge & draps inclus"].map((item) => (
-              <div key={item} style={{ fontSize: 13, color: TEXT_MUTED, display: "flex", alignItems: "center", gap: 8 }}>
-                {item}
-              </div>
+              <div key={item} style={{ fontSize: 13, color: TEXT_MUTED, display: "flex", alignItems: "center", gap: 8 }}>{item}</div>
             ))}
           </div>
         </div>
 
         {/* ── Colonne droite — formulaire ── */}
-        <div className="contact-card-right" style={{
-          background: "rgba(255,255,255,0.04)",
-          border: `1px solid ${BORDER}`,
-          borderRadius: 24,
-          padding: "36px 32px",
-          backdropFilter: "blur(12px)",
-        }}>
-          <h2 style={{
-            fontSize: 22, fontWeight: 600, color: TEXT,
-            marginBottom: 28, letterSpacing: "-0.3px",
-          }}>
+        <div className="contact-card-right" style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${BORDER}`, borderRadius: 24, padding: "36px 32px", backdropFilter: "blur(12px)" }}>
+          <h2 style={{ fontSize: 22, fontWeight: 600, color: TEXT, marginBottom: 24, letterSpacing: "-0.3px" }}>
             Envoyez-nous un message
           </h2>
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+            <div className="contact-name-email-grid">
               <div>
                 <label style={labelStyle}>Nom</label>
-                <input
-                  required value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  onFocus={() => setFocused("name")}
-                  onBlur={() => setFocused(null)}
-                  placeholder="Votre nom"
-                  style={inputStyle("name")}
-                />
+                <input required value={name} onChange={(e) => setName(e.target.value)} onFocus={() => setFocused("name")} onBlur={() => setFocused(null)} placeholder="Votre nom" style={inputStyle("name")} />
               </div>
               <div>
                 <label style={labelStyle}>Email</label>
-                <input
-                  required type="email" value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onFocus={() => setFocused("email")}
-                  onBlur={() => setFocused(null)}
-                  placeholder="nom@email.com"
-                  style={inputStyle("email")}
-                />
+                <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setFocused("email")} onBlur={() => setFocused(null)} placeholder="nom@email.com" style={inputStyle("email")} />
               </div>
             </div>
 
             <div style={{ marginBottom: 20 }}>
               <label style={labelStyle}>Téléphone <span style={{ opacity: 0.5, fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>(optionnel)</span></label>
-              <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                onFocus={() => setFocused("phone")}
-                onBlur={() => setFocused(null)}
-                placeholder="06..."
-                style={inputStyle("phone")}
-              />
+              <input value={phone} onChange={(e) => setPhone(e.target.value)} onFocus={() => setFocused("phone")} onBlur={() => setFocused(null)} placeholder="06..." style={inputStyle("phone")} />
             </div>
 
-            <div style={{ marginBottom: 28 }}>
+            <div style={{ marginBottom: 24 }}>
               <label style={labelStyle}>Message</label>
               <textarea
                 required value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                onFocus={() => setFocused("message")}
-                onBlur={() => setFocused(null)}
+                onFocus={() => setFocused("message")} onBlur={() => setFocused(null)}
                 placeholder="Indiquez votre demande : dates souhaitées, nombre de personnes, gîte souhaité..."
                 rows={6}
-                style={{
-                  ...inputStyle("message"),
-                  resize: "vertical",
-                  minHeight: 148,
-                  paddingTop: 14,
-                  lineHeight: 1.6,
-                }}
+                style={{ ...inputStyle("message"), resize: "vertical", minHeight: 140, paddingTop: 14, lineHeight: 1.6 }}
               />
             </div>
 
             {status && (
-              <div style={{
-                marginBottom: 20,
-                padding: "14px 18px",
-                borderRadius: 12,
-                fontSize: 14, lineHeight: 1.6,
-                background: status.type === "success"
-                  ? "rgba(28,58,47,0.35)"
-                  : "rgba(190,24,93,0.18)",
-                border: status.type === "success"
-                  ? `1px solid rgba(28,58,47,0.6)`
-                  : "1px solid rgba(244,114,182,0.35)",
-                color: TEXT,
-              }}>
+              <div style={{ marginBottom: 20, padding: "14px 18px", borderRadius: 12, fontSize: 14, lineHeight: 1.6, background: status.type === "success" ? "rgba(28,58,47,0.35)" : "rgba(190,24,93,0.18)", border: status.type === "success" ? "1px solid rgba(28,58,47,0.6)" : "1px solid rgba(244,114,182,0.35)", color: TEXT }}>
                 {status.type === "success" ? "✅ " : "⚠️ "}{status.text}
               </div>
             )}
 
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <button
-                type="submit"
-                disabled={sending}
-                className="contact-submit"
-                style={{
-                  background: ACCENT,
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 12,
-                  padding: "14px 32px",
-                  fontSize: 15,
-                  fontWeight: 700,
-                  cursor: sending ? "not-allowed" : "pointer",
-                  boxShadow: "0 6px 24px rgba(28,58,47,0.40)",
-                  opacity: sending ? 0.7 : 1,
-                  letterSpacing: "0.02em",
-                }}
-              >
+            <div className="contact-submit-wrapper" style={{ display: "flex", justifyContent: "flex-end" }}>
+              <button type="submit" disabled={sending} className="contact-submit" style={{ background: ACCENT, color: "#fff", border: "none", borderRadius: 12, padding: "14px 32px", fontSize: 15, fontWeight: 700, cursor: sending ? "not-allowed" : "pointer", boxShadow: "0 6px 24px rgba(28,58,47,0.40)", opacity: sending ? 0.7 : 1, letterSpacing: "0.02em" }}>
                 {sending ? "Envoi en cours…" : "Envoyer le message →"}
               </button>
             </div>
