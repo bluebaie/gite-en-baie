@@ -22,12 +22,21 @@ export default function ContactPage() {
         background: "linear-gradient(160deg, rgba(7,30,32,0.88) 0%, rgba(11,31,37,0.82) 50%, rgba(20,50,40,0.90) 100%)",
       }} />
 
-      {/* Contenu */}
-      <div style={{
-        position: "relative",
-        zIndex: 2,
-        padding: "120px 24px 80px",
-      }}>
+      {/* Padding responsive via <style> — desktop inchangé */}
+      <style>{`
+        .contact-content {
+          position: relative;
+          z-index: 2;
+          padding: 120px 24px 80px;
+        }
+        @media (max-width: 767px) {
+          .contact-content {
+            padding: 90px 16px 60px;
+          }
+        }
+      `}</style>
+
+      <div className="contact-content">
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <ContactPageForm />
         </div>
