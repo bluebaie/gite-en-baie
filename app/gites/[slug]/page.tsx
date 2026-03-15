@@ -2,24 +2,6 @@ import { fetchGites } from "../../../lib/airtable";
 import GiteGalleryClient from "../../../components/GiteGalleryClient";
 import ReserveButton from "../../../components/ReserveButton";
 
-// ─── Palette "Ivoire Chaud" — Relais & Châteaux ───────────────────────────
-//
-//  BG          #F7F3EC   ivoire chaud principal — toute la page
-//  BG_CARD     #FFFFFF   carte blanche sur ivoire = contraste élégant
-//  BG_BADGE    #EDE8DF   ivoire légèrement plus sombre pour badges / réassurance
-//  BORDER      #DDD7CB   beige bordure naturelle
-//  DIVIDER     #E8E3D9   séparateur très discret
-//
-//  TEXT        #1C1917   noir chaud (pas froid)
-//  TEXT_MUTED  #78716C   marron-gris secondaire
-//
-//  ACCENT      #1C3A2F   vert forêt profond — bouton Réserver (premium, naturel)
-//  ACCENT_GLOW rgba(28,58,47,0.20)  ombre bouton
-//
-//  STAR        #B45309   ambre chaud pour les étoiles
-//
-// ──────────────────────────────────────────────────────────────────────────
-
 const BG         = "#F7F3EC";
 const BG_CARD    = "#FFFFFF";
 const BG_BADGE   = "#EDE8DF";
@@ -28,7 +10,6 @@ const DIVIDER    = "#E8E3D9";
 const TEXT       = "#1C1917";
 const TEXT_MUTED = "#78716C";
 const ACCENT     = "#1C3A2F";
-const ACCENT_GLOW= "rgba(28,58,47,0.22)";
 
 export default async function GitePage({
   params,
@@ -87,63 +68,99 @@ export default async function GitePage({
 
   return (
     <div style={{
-      background: BG,
-      color: TEXT,
+      background: BG, color: TEXT,
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
       minHeight: "100vh",
     }}>
-      <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px" }}>
-        <div style={{ paddingTop: 96 }} />
 
-        {/* ── Retour ── */}
-        <a href="/gites" style={{
-          display: "inline-flex", alignItems: "center", gap: 6,
-          fontSize: 13, color: TEXT_MUTED, textDecoration: "none",
-          padding: "0 0 20px", cursor: "pointer", fontWeight: 500,
-          letterSpacing: "0.1px",
-          position: "relative",
-          zIndex: 10,
-        }}>
+      <style>{`
+        /* ── Responsive gîte page ── */
+        .gite-outer    { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+        .gite-pt       { padding-top: 96px; }
+        .gite-layout   {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) 370px;
+          gap: 64px;
+          align-items: start;
+        }
+        .gite-equip-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .gite-sidebar  { position: sticky; top: 96px; }
+        .gite-map      { height: 340px; }
+        .gite-bottom   { height: 80px; }
+
+        @media (max-width: 767px) {
+          .gite-outer  { padding: 0 16px; }
+          .gite-pt     { padding-top: 72px; }
+
+          /* Sidebar passe sous le contenu */
+          .gite-layout {
+            grid-template-columns: 1fr;
+            gap: 0;
+          }
+
+          /* Sidebar : sticky désactivé, passe en premier sur mobile */
+          .gite-sidebar {
+            position: static;
+            order: -1;
+            margin-bottom: 28px;
+          }
+
+          /* Équipements : 1 colonne */
+          .gite-equip-grid {
+            grid-template-columns: 1fr;
+            gap: 8px;
+          }
+
+          /* Carte moins haute */
+          .gite-map { height: 220px; }
+
+          /* Espace bas réduit (bouton sticky ReserveButton) */
+          .gite-bottom { height: 100px; }
+
+          /* Titre plus compact */
+          .gite-title { font-size: 22px !important; }
+
+          /* Badges row plus compact */
+          .gite-badges { gap: 6px !important; padding-bottom: 20px !important; }
+          .gite-badge  { padding: 6px 10px !important; font-size: 12px !important; }
+        }
+      `}</style>
+
+      <div className="gite-outer">
+        <div className="gite-pt" />
+
+        {/* Retour */}
+        <a href="/gites" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: TEXT_MUTED, textDecoration: "none", padding: "0 0 18px", cursor: "pointer", fontWeight: 500, letterSpacing: "0.1px", position: "relative", zIndex: 10 }}>
           ← Retour aux gîtes
         </a>
 
-        {/* ── Titre ── */}
-        <h1 style={{
-          fontSize: 30, fontWeight: 700, color: TEXT,
-          marginBottom: 10, lineHeight: 1.25, letterSpacing: "-0.4px",
-        }}>
+        {/* Titre */}
+        <h1 className="gite-title" style={{ fontSize: 30, fontWeight: 700, color: TEXT, marginBottom: 10, lineHeight: 1.25, letterSpacing: "-0.4px" }}>
           {gite.nom}
         </h1>
 
-        {/* ── Sous-titre ── */}
-        <div style={{
-          display: "flex", flexWrap: "wrap", alignItems: "center",
-          gap: "4px 10px", fontSize: 14, color: TEXT_MUTED, marginBottom: 24,
-        }}>
+        {/* Sous-titre notes + adresse */}
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "4px 10px", fontSize: 14, color: TEXT_MUTED, marginBottom: 20 }}>
           {gite.airbnbNote != null && (
             <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
               <span style={{ color: "#B45309", fontSize: 13 }}>★</span>
               <strong style={{ color: TEXT }}>{Number(gite.airbnbNote).toFixed(2)}</strong>
-              {gite.airbnbAvis && (
-                <span style={{ color: TEXT_MUTED }}>· {gite.airbnbAvis} avis Airbnb</span>
-              )}
+              {gite.airbnbAvis && <span style={{ color: TEXT_MUTED }}>· {gite.airbnbAvis} avis Airbnb</span>}
             </span>
           )}
-          {gite.airbnbNote != null && gite.bookingNote != null && (
-            <span style={{ color: BORDER, margin: "0 2px" }}>·</span>
-          )}
+          {gite.airbnbNote != null && gite.bookingNote != null && <span style={{ color: BORDER, margin: "0 2px" }}>·</span>}
           {gite.bookingNote != null && (
             <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
               <span style={{ color: "#003580", fontSize: 13 }}>★</span>
               <strong style={{ color: TEXT }}>{Number(gite.bookingNote).toFixed(1)}</strong>
-              {gite.bookingAvis && (
-                <span style={{ color: TEXT_MUTED }}>· {gite.bookingAvis} avis Booking</span>
-              )}
+              {gite.bookingAvis && <span style={{ color: TEXT_MUTED }}>· {gite.bookingAvis} avis Booking</span>}
             </span>
           )}
-          {(gite.airbnbNote != null || gite.bookingNote != null) && (
-            <span style={{ color: BORDER, margin: "0 2px" }}>·</span>
-          )}
+          {(gite.airbnbNote != null || gite.bookingNote != null) && <span style={{ color: BORDER, margin: "0 2px" }}>·</span>}
           <span style={{ color: TEXT_MUTED }}>
             {gite.adresse ? `${gite.adresse}, ` : ""}
             {gite.codePostal ? `${gite.codePostal} ` : ""}
@@ -151,34 +168,18 @@ export default async function GitePage({
           </span>
         </div>
 
-        {/* ── Galerie ── */}
+        {/* Galerie */}
         <GiteGalleryClient images={gallery} title={gite.nom} />
 
-        {/* ══════════════════════════════════════
-            LAYOUT PRINCIPAL
-        ══════════════════════════════════════ */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(0, 1fr) 370px",
-          gap: 64,
-          alignItems: "start",
-        }}>
+        {/* Layout principal */}
+        <div className="gite-layout">
 
           {/* ════ GAUCHE ════ */}
           <div>
-
             {/* Info badges */}
-            <div style={{
-              display: "flex", flexWrap: "wrap", gap: 8,
-              paddingBottom: 28, borderBottom: `1px solid ${DIVIDER}`,
-            }}>
+            <div className="gite-badges" style={{ display: "flex", flexWrap: "wrap", gap: 8, paddingBottom: 28, borderBottom: `1px solid ${DIVIDER}` }}>
               {infoBadges.map((item, i) => (
-                <span key={i} style={{
-                  background: BG_BADGE,
-                  border: `1px solid ${BORDER}`,
-                  borderRadius: 8, padding: "8px 14px",
-                  fontSize: 13, color: TEXT, fontWeight: 500,
-                }}>
+                <span className="gite-badge" key={i} style={{ background: BG_BADGE, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "8px 14px", fontSize: 13, color: TEXT, fontWeight: 500 }}>
                   {item}
                 </span>
               ))}
@@ -186,34 +187,21 @@ export default async function GitePage({
 
             {/* Description */}
             <div style={{ padding: "28px 0", borderBottom: `1px solid ${DIVIDER}` }}>
-              <h2 style={{ fontSize: 20, fontWeight: 600, color: TEXT, marginBottom: 14 }}>
-                À propos du logement
-              </h2>
+              <h2 style={{ fontSize: 20, fontWeight: 600, color: TEXT, marginBottom: 14 }}>À propos du logement</h2>
               {gite.descriptionCourte?.trim() && (
-                <p style={{ fontSize: 16, lineHeight: 1.8, color: TEXT, marginBottom: 14 }}>
-                  {gite.descriptionCourte}
-                </p>
+                <p style={{ fontSize: 16, lineHeight: 1.8, color: TEXT, marginBottom: 14 }}>{gite.descriptionCourte}</p>
               )}
               {gite.descriptionLongue?.trim() && (
-                <div style={{ fontSize: 15, lineHeight: 1.85, color: TEXT_MUTED, whiteSpace: "pre-line" }}>
-                  {gite.descriptionLongue}
-                </div>
+                <div style={{ fontSize: 15, lineHeight: 1.85, color: TEXT_MUTED, whiteSpace: "pre-line" }}>{gite.descriptionLongue}</div>
               )}
             </div>
 
             {/* Équipements */}
             <div style={{ padding: "28px 0", borderBottom: `1px solid ${DIVIDER}` }}>
-              <h2 style={{ fontSize: 20, fontWeight: 600, color: TEXT, marginBottom: 16 }}>
-                Équipements et points forts
-              </h2>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <h2 style={{ fontSize: 20, fontWeight: 600, color: TEXT, marginBottom: 16 }}>Équipements et points forts</h2>
+              <div className="gite-equip-grid">
                 {equipements.map((item, i) => (
-                  <div key={i} style={{
-                    display: "flex", alignItems: "center", gap: 12,
-                    padding: "14px 16px", borderRadius: 12,
-                    border: `1px solid ${BORDER}`, background: BG_CARD,
-                    fontSize: 14, color: TEXT,
-                  }}>
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", borderRadius: 12, border: `1px solid ${BORDER}`, background: BG_CARD, fontSize: 14, color: TEXT }}>
                     <span style={{ fontSize: 20 }}>{item.icon}</span>
                     <span>{item.label}</span>
                   </div>
@@ -224,15 +212,8 @@ export default async function GitePage({
             {/* Couchages */}
             {gite.lits?.trim() && (
               <div style={{ padding: "28px 0", borderBottom: `1px solid ${DIVIDER}` }}>
-                <h2 style={{ fontSize: 20, fontWeight: 600, color: TEXT, marginBottom: 14 }}>
-                  Couchages
-                </h2>
-                <div style={{
-                  background: BG_CARD, borderRadius: 12,
-                  border: `1px solid ${BORDER}`,
-                  padding: "18px 22px", fontSize: 14,
-                  lineHeight: 1.8, color: TEXT_MUTED, whiteSpace: "pre-line",
-                }}>
+                <h2 style={{ fontSize: 20, fontWeight: 600, color: TEXT, marginBottom: 14 }}>Couchages</h2>
+                <div style={{ background: BG_CARD, borderRadius: 12, border: `1px solid ${BORDER}`, padding: "18px 22px", fontSize: 14, lineHeight: 1.8, color: TEXT_MUTED, whiteSpace: "pre-line" }}>
                   {gite.lits}
                 </div>
               </div>
@@ -240,31 +221,19 @@ export default async function GitePage({
 
             {/* Localisation */}
             <div style={{ paddingTop: 28 }}>
-              <h2 style={{ fontSize: 20, fontWeight: 600, color: TEXT, marginBottom: 16 }}>
-                Localisation
-              </h2>
-
-              {/* Google Maps embed — gratuit, sans clé API */}
-              <div style={{
-                height: 340, borderRadius: 16, overflow: "hidden",
-                border: `1px solid ${BORDER}`,
-                boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-              }}>
+              <h2 style={{ fontSize: 20, fontWeight: 600, color: TEXT, marginBottom: 16 }}>Localisation</h2>
+              <div className="gite-map" style={{ borderRadius: 16, overflow: "hidden", border: `1px solid ${BORDER}`, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
                 <iframe
                   title={`Carte — ${gite.nom}`}
-                  width="100%"
-                  height="100%"
+                  width="100%" height="100%"
                   style={{ display: "block", border: 0 }}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   src={`https://maps.google.com/maps?q=${encodeURIComponent(
-                    [gite.adresse, gite.codePostal, gite.ville, "France"]
-                      .filter(Boolean)
-                      .join(", ")
+                    [gite.adresse, gite.codePostal, gite.ville, "France"].filter(Boolean).join(", ")
                   )}&output=embed&z=15`}
                 />
               </div>
-
               <p style={{ marginTop: 12, fontSize: 14, color: TEXT_MUTED, lineHeight: 1.7 }}>
                 <strong style={{ color: TEXT }}>
                   {gite.adresse ? `${gite.adresse}, ` : ""}
@@ -275,78 +244,40 @@ export default async function GitePage({
             </div>
           </div>
 
-          {/* ════ SIDEBAR STICKY ════ */}
-          <aside style={{ position: "sticky", top: 96 }}>
-            <div style={{
-              background: BG_CARD,
-              border: `1px solid ${BORDER}`,
-              borderRadius: 20,
-              padding: "24px",
-              boxShadow: "0 8px 40px rgba(0,0,0,0.09)",
-            }}>
+          {/* ════ SIDEBAR ════ */}
+          <aside className="gite-sidebar">
+            <div style={{ background: BG_CARD, border: `1px solid ${BORDER}`, borderRadius: 20, padding: "24px", boxShadow: "0 8px 40px rgba(0,0,0,0.09)" }}>
 
-              {/* ══ BOUTON RÉSERVER ══ */}
               <ReserveButton href={reservationUrl} />
 
               <p style={{ textAlign: "center", fontSize: 11, color: TEXT_MUTED, marginBottom: 20, marginTop: 6 }}>
                 Réservation sécurisée via Beds24 · Sans frais cachés
               </p>
 
-              {/* Séparateur */}
               <div style={{ borderTop: `1px solid ${DIVIDER}`, marginBottom: 16 }} />
 
-              {/* Label section */}
-              <div style={{
-                fontSize: 11, fontWeight: 600, color: TEXT_MUTED,
-                textTransform: "uppercase", letterSpacing: "1px", marginBottom: 12,
-              }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: TEXT_MUTED, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 12 }}>
                 Détails du logement
               </div>
 
-              {/* Infos */}
               {reservationInfos.map(([label, value], i, arr) => (
-                <div key={i} style={{
-                  display: "flex", justifyContent: "space-between", alignItems: "center",
-                  fontSize: 13, padding: "9px 0",
-                  borderBottom: i < arr.length - 1 ? `1px solid ${DIVIDER}` : "none",
-                }}>
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13, padding: "9px 0", borderBottom: i < arr.length - 1 ? `1px solid ${DIVIDER}` : "none" }}>
                   <span style={{ color: TEXT_MUTED }}>{label}</span>
                   <span style={{ fontWeight: 600, color: TEXT }}>{value}</span>
                 </div>
               ))}
 
-              {/* Bouton secondaire Booking */}
               {gite.bookingUrl && gite.bookingUrl !== reservationUrl && (
                 <>
                   <div style={{ borderTop: `1px solid ${DIVIDER}`, margin: "16px 0" }} />
-                  <a
-                    href={gite.bookingUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      width: "100%", padding: "12px",
-                      background: "transparent", color: TEXT,
-                      borderRadius: 12, fontSize: 13, fontWeight: 600,
-                      textDecoration: "none", border: `1px solid ${BORDER}`,
-                      boxSizing: "border-box",
-                    }}
-                  >
+                  <a href={gite.bookingUrl} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", padding: "12px", background: "transparent", color: TEXT, borderRadius: 12, fontSize: 13, fontWeight: 600, textDecoration: "none", border: `1px solid ${BORDER}`, boxSizing: "border-box" }}>
                     Voir aussi sur Booking.com
                   </a>
                 </>
               )}
 
-
-              {/* Réassurance */}
               <div style={{ marginTop: 16 }}>
-                <div style={{
-                  textAlign: "center",
-                  background: BG_BADGE,
-                  border: `1px solid ${BORDER}`,
-                  borderRadius: 10, padding: "10px 6px",
-                  fontSize: 11, color: TEXT_MUTED, lineHeight: 1.4,
-                }}>
+                <div style={{ textAlign: "center", background: BG_BADGE, border: `1px solid ${BORDER}`, borderRadius: 10, padding: "10px 6px", fontSize: 11, color: TEXT_MUTED, lineHeight: 1.4 }}>
                   <div style={{ fontSize: 18, marginBottom: 4 }}>🔒</div>
                   Paiement sécurisé
                 </div>
@@ -355,7 +286,7 @@ export default async function GitePage({
           </aside>
         </div>
 
-        <div style={{ height: 80 }} />
+        <div className="gite-bottom" />
       </div>
     </div>
   );
