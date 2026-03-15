@@ -291,7 +291,7 @@ export default function Footer() {
             {[
               { name: "Mentions légales", href: "/mentions-legales" },
               { name: "Politique de confidentialité", href: "/confidentialite" },
-              { name: "CGV", href: "/cgv" },
+              
             ].map((l) => (
               <a
                 key={l.name}
