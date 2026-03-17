@@ -9,7 +9,7 @@ type Spot = {
 };
 
 const SPOTS: Spot[] = [
-  { title: "Le Crotoy", subtitle: "port • plage • Baie de Somme", text: "Charmant port de pêche et station balnéaire, Le Crotoy offre une vue exceptionnelle sur la baie. Idéal pour une promenade sur le port, une sortie en mer ou un coucher de soleil.", image: "/images/home/region/Le Crotoy.jpg", badge: "Baie de Somme" },
+  { title: "Le Crotoy", subtitle: "port • plage • Baie de Somme", text: "Charmant port de pêche et station balnéaire, Le Crotoy offre une vue exceptionnelle sur la baie. Idéal pour une promenade sur le port, une sortie en mer ou un coucher de soleil.", image: "/images/home/region/le-crotoy.jpg", badge: "Baie de Somme" },
   { title: "Saint-Valery-sur-Somme", subtitle: "cité médiévale • quais • train de la baie", text: "Village emblématique de la Baie de Somme, Saint-Valery séduit par ses ruelles historiques, son port animé et ses panoramas sur la baie.", image: "/images/home/region/saint-valery.jpg", badge: "Village" },
   { title: "Cayeux-sur-Mer & Le Hourdel", subtitle: "plage de galets • cabines • phoques", text: "Connue pour sa longue digue bordée de cabines, Cayeux est idéale pour profiter de la mer et observer les phoques près du Hourdel, selon les marées.", image: "/images/home/region/hourdel.jpg", badge: "Nature" },
   { title: "Fort-Mahon-Plage & Quend-Plage", subtitle: "dunes • plage • activités", text: "Deux stations balnéaires entourées de dunes et de nature, parfaites pour les balades à vélo, les sports nautiques et les longues promenades sur la plage.", image: "/images/home/region/quend.jpg", badge: "Plage" },
