@@ -291,7 +291,7 @@ export default function Footer() {
             <a
               href="https://www.nova-baie.com"
               target="_blank"
-              rel="noopener"
+              rel="noopener nofollow"
               style={{
                 fontSize: 11, color: "rgba(248,247,242,0.55)",
                 textDecoration: "none", transition: "color 0.15s", width: "fit-content",
