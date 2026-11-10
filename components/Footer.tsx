@@ -284,9 +284,24 @@ export default function Footer() {
           justifyContent: "space-between", alignItems: "center",
           gap: 12,
         }}>
-          <p style={{ fontSize: 11, color: "rgba(248,247,242,0.32)", margin: 0 }}>
-            © {year} Gîtes en Baie · Tous droits réservés
-          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <p style={{ fontSize: 11, color: "rgba(248,247,242,0.32)", margin: 0 }}>
+              © {year} Gîtes en Baie · Tous droits réservés
+            </p>
+            <a
+              href="https://www.nova-baie.com"
+              target="_blank"
+              rel="noopener"
+              style={{
+                fontSize: 11, color: "rgba(248,247,242,0.55)",
+                textDecoration: "none", transition: "color 0.15s", width: "fit-content",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(248,247,242,0.85)")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(248,247,242,0.55)")}
+            >
+              Site conçu et développé par <span style={{ fontWeight: 600, letterSpacing: "0.12em" }}>NOVA BAIE</span>
+            </a>
+          </div>
           <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
             {[
               { name: "Mentions légales", href: "/mentions-legales" },
